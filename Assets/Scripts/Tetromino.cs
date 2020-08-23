@@ -10,8 +10,9 @@ public class Tetromino : MonoBehaviour
     public TetraFace face;
     public float timeToFall;
     protected Vector2 nexPos;
-    protected GameManager gameManager;
+    public GameManager gameManager;
     private Coroutine routine;
+    private int activeCounter;
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -23,6 +24,7 @@ public class Tetromino : MonoBehaviour
             squareScript[i].AssignParent(this);
         }
         routine = StartCoroutine(FallinRoutine());
+        activeCounter = 4;
     }
     
     // Update is called once per frame
@@ -38,20 +40,8 @@ public class Tetromino : MonoBehaviour
             yield return new WaitForSeconds(timeToFall);
         }
     }
-    /*
-    protected virtual void FixedUpdate()
-    {
-        if (timer > timeToFall)
-        {
-            if (state == TetraState.Falling)
-                MoveParent(0, -1);
-            //transform.position = new Vector2(transform.position.x, transform.position.y - 1);
-            //RotateTe(-1);
-            timer = 0;
-        }
-        timer += Time.deltaTime;
-    }
-    */
+    
+    
     /// <summary>
     /// 
     /// </summary>
@@ -59,9 +49,20 @@ public class Tetromino : MonoBehaviour
     /// <param name="y"></param>
     public void MoveParent(int x, int y)
     {
-        nexPos.x += x;
-        nexPos.y += y;
-        transform.position = nexPos;
+        bool canMove = false;
+        for(int i = 0; i < 4; ++i)
+        {
+            canMove = gameManager.CheckTile((int)squares[i].transform.position.x + x,
+                (int)squares[i].transform.position.y + y);
+            if (!canMove)
+                break;
+        }
+        if (canMove)
+        {
+            nexPos.x += x;
+            nexPos.y += y;
+            transform.position = nexPos;
+        }
     }
 
     public void StopFalling()
@@ -124,8 +125,16 @@ public class Tetromino : MonoBehaviour
         {
             squareScript[i].ResetSquare();
         }
+        activeCounter = 4;
     }
-
+    public void NotifyParent()
+    {
+        --activeCounter;
+        if(activeCounter == 0)
+        {
+            gameObject.SetActive(false);
+        }
+    }
     protected virtual void RotateToDirection(TetraFace newFace)
     {
 

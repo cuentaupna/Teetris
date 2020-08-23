@@ -6,29 +6,31 @@ public class Tile : MonoBehaviour
 { 
     public enum TileStateEnum { empty, full}
     public TileStateEnum tileState;
+    private GameObject leGameObject;
+    public Square leSquare;
     // Start is called before the first frame update
     void Start()
     {
         tileState = TileStateEnum.empty;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public bool IsTheTileEmpty()
     {
         return tileState == TileStateEnum.empty;
     }
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Landed"))
-            tileState = TileStateEnum.full;
-    }
 
-    public void OnTriggerExit2D(Collider2D collision)
+    public void ChangeState(TileStateEnum newState, Square newSquare)
     {
-        tileState = TileStateEnum.empty;
+        tileState = newState;
+        if (newState == TileStateEnum.full)
+            leSquare = newSquare;
+        else
+        {
+            leSquare = null;
+        }
+        if(leSquare != null)
+        {
+            Debug.Log("It works");
+        }
     }
+    
 }

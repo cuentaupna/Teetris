@@ -14,6 +14,7 @@ public class Square : MonoBehaviour
     
     public void ResetSquare()
     {
+        gameObject.SetActive(true);
         rutine = StartCoroutine(CheckBorders());
     }
     private IEnumerator CheckBorders()
@@ -46,13 +47,23 @@ public class Square : MonoBehaviour
     {
         StopCoroutine(rutine);
         gameObject.layer = LayerMask.NameToLayer("Landed");
+        sqParent.gameManager.ChangeStateOfTiles((int)transform.position.x,
+            (int)transform.position.y, Tile.TileStateEnum.full, this);
     }
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.GetContact(0).normal);
-        if (collision.GetContact(0).normal == Vector2.up)
+        if (collision.GetContact(0).normal.normalized == Vector2.up)
         {
             sqParent.StopFalling();
         }
     }
+
+    public void MakeSquareSleep()
+    {
+        sqParent.gameManager.ChangeStateOfTiles((int)transform.position.x,
+            (int)transform.position.y, Tile.TileStateEnum.empty, null);
+        gameObject.SetActive(false);
+        sqParent.NotifyParent();
+    }
+    
 }

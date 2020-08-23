@@ -26,23 +26,22 @@ public class L_Tetra : Tetromino
                     if (canRotate)
                     {
                         face = TetraFace.Up;
-                        squareScript[3].MoveSquare(0.5f, 0.5f);
+                        squareScript[3].MoveSquare(1.5f, 0.5f);
                         for (int i = 0; i < 3; ++i)
                         {
-                            squareScript[i].MoveSquare(1.5f, 0.5f + i);
+                            squareScript[i].MoveSquare(0.5f, 0.5f + i);
                         }
                     }
-
                 }
                 break;
             case TetraFace.Left:
-                canRotate = gameManager.CheckTile((int)transform.position.x + 2,
-                    (int)transform.position.y);
+                canRotate = gameManager.CheckTile((int)transform.position.x + 1,
+                    (int)transform.position.y + 2);
                 if (canRotate)
                 {
                     for (int i = 0; i < 3; ++i)
                     {
-                        canRotate = gameManager.CheckTile((int)transform.position.x + i,
+                        canRotate = gameManager.CheckTile((int)transform.position.x + i - 1,
                         (int)transform.position.y + 1);
                         if (!canRotate)
                         {
@@ -52,18 +51,16 @@ public class L_Tetra : Tetromino
                     if (canRotate)
                     {
                         face = TetraFace.Left;
-                        squareScript[3].MoveSquare(2.5f, 0.5f);
+                        squareScript[3].MoveSquare(1.5f, 2.5f);
                         for (int i = 0; i < 3; ++i)
                         {
-                            squareScript[i].MoveSquare(0.5f + i, 1.5f);
+                            squareScript[i].MoveSquare(-0.5f + i, 1.5f);
                         }
                     }
-
                 }
-
                 break;
             case TetraFace.Down:
-                canRotate = gameManager.CheckTile((int)transform.position.x + 2,
+                canRotate = gameManager.CheckTile((int)transform.position.x - 1,
                     (int)transform.position.y + 2);
                 if (canRotate)
                 {
@@ -79,23 +76,22 @@ public class L_Tetra : Tetromino
                     if (canRotate)
                     {
                         face = TetraFace.Down;
-                        squareScript[3].MoveSquare(2.5f, 2.5f);
+                        squareScript[3].MoveSquare(-0.5f, 2.5f);
                         for (int i = 0; i < 3; ++i)
                         {
-                            squareScript[i].MoveSquare(1.5f, 0.5f + i);
+                            squareScript[i].MoveSquare(0.5f, 0.5f + i);
                         }
                     }
-
                 }
                 break;
             case TetraFace.Right:
-                canRotate = gameManager.CheckTile((int)transform.position.x,
-                    (int)transform.position.y + 2);
+                canRotate = gameManager.CheckTile((int)transform.position.x - 1,
+                    (int)transform.position.y);
                 if (canRotate)
                 {
                     for (int i = 0; i < 3; ++i)
                     {
-                        canRotate = gameManager.CheckTile((int)transform.position.x + i,
+                        canRotate = gameManager.CheckTile((int)transform.position.x + i - 1,
                         (int)transform.position.y + 1);
                         if (!canRotate)
                         {
@@ -105,13 +101,12 @@ public class L_Tetra : Tetromino
                     if (canRotate)
                     {
                         face = TetraFace.Right;
-                        squareScript[3].MoveSquare(0.5f, 2.5f);
+                        squareScript[3].MoveSquare(-0.5f, 0.5f);
                         for (int i = 0; i < 3; ++i)
                         {
-                            squareScript[i].MoveSquare(0.5f + i, 1.5f);
+                            squareScript[i].MoveSquare(-0.5f + i, 1.5f);
                         }
                     }
-
                 }
                 break;
         }

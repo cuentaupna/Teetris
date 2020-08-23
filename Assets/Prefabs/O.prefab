@@ -53,7 +53,7 @@ MonoBehaviour:
   - {fileID: 3342917686443151747}
   - {fileID: 8962377088008372934}
   face: 0
-  timeToFall: 0
+  timeToFall: 1
 --- !u!1001 &1992679397736427252
 PrefabInstance:
   m_ObjectHideFlags: 0
