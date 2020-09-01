@@ -11,7 +11,9 @@ public class Square : MonoBehaviour
     {
         ResetSquare();
     }
-    
+    /// <summary>
+    /// 
+    /// </summary>
     public void ResetSquare()
     {
         gameObject.SetActive(true);
@@ -34,15 +36,27 @@ public class Square : MonoBehaviour
             yield return null;
         }
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void MoveSquare(float x, float y)
     {
         
         transform.localPosition = new Vector2(x, y);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tetraParent"></param>
     public void AssignParent(Tetromino tetraParent)
     {
         sqParent = tetraParent;
     }
+    /// <summary>
+    /// 
+    /// </summary>
     public void LandSquare()
     {
         StopCoroutine(rutine);
@@ -50,6 +64,10 @@ public class Square : MonoBehaviour
         sqParent.gameManager.ChangeStateOfTiles((int)transform.position.x,
             (int)transform.position.y, Tile.TileStateEnum.full, this);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collision"></param>
     public void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.GetContact(0).normal.normalized == Vector2.up)
@@ -57,13 +75,19 @@ public class Square : MonoBehaviour
             sqParent.StopFalling();
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void MakeSquareSleep()
     {
-        sqParent.gameManager.ChangeStateOfTiles((int)transform.position.x,
-            (int)transform.position.y, Tile.TileStateEnum.empty, null);
         gameObject.SetActive(false);
         sqParent.NotifyParent();
     }
     
+    public void MakeEmFall()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Falling");
+        sqParent.RestartRoutine();
+        
+    }
 }

@@ -64,7 +64,9 @@ public class Tetromino : MonoBehaviour
             transform.position = nexPos;
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void StopFalling()
     {
         StopCoroutine(routine);
@@ -74,6 +76,10 @@ public class Tetromino : MonoBehaviour
         }
         gameObject.layer = LayerMask.NameToLayer("Landed");
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
     public void Rotate(int p)
     {
         if (p == 0)
@@ -115,18 +121,34 @@ public class Tetromino : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void Reset()
     {
         RotateToDirection(TetraFace.Up);
-        routine = StartCoroutine(FallinRoutine());
-        gameObject.layer = LayerMask.NameToLayer("Falling");
+        RestartRoutine();
         for (int i = 0; i < 4; ++i)
         {
             squareScript[i].ResetSquare();
         }
         activeCounter = 4;
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    public void RestartRoutine()
+    {
+        if(gameObject.layer == LayerMask.NameToLayer("Landed"))
+        {
+            gameObject.layer = LayerMask.NameToLayer("Falling");
+            routine = StartCoroutine(FallinRoutine());
+            
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
     public void NotifyParent()
     {
         --activeCounter;
@@ -135,6 +157,10 @@ public class Tetromino : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="newFace"></param>
     protected virtual void RotateToDirection(TetraFace newFace)
     {
 

@@ -33,4 +33,25 @@ public class Tile : MonoBehaviour
         }
     }
     
+    public void MakeSquareFall()
+    {
+        if(leSquare != null)
+        {
+            //leSquare.MakeEmFall();
+            Vector2 pos = leSquare.transform.localPosition;
+            pos.y--;
+            leSquare.MoveSquare(pos.x, pos.y);
+            leSquare = null;
+            tileState = TileStateEnum.empty;
+        }
+    }
+
+    public void LetSquareGo()
+    {
+        if(leSquare != null)
+        {
+            leSquare.MakeSquareSleep();
+            tileState = TileStateEnum.empty;
+        }
+    }
 }

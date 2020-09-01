@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     {
         //Check this again
         //Debug.Log(y+" "+x);
-        if (x < 0 || x > 9 || y > 15)
+        if (x < 0 || x > 9 || y > 15 || y < 0)
             return true;
         return tiles[y, x].IsTheTileEmpty();
     }
@@ -81,11 +81,20 @@ public class GameManager : MonoBehaviour
             }
             if(squaresToDelete.Count != 0)
             {
+                //TODO
+                //Contar cuantas líneas consecutivas hay.
                 foreach (int row in squaresToDelete)
                 {
                     for (int column = 0; column < 10; ++column)
                     {
-                        //tiles[row, column].
+                        tiles[row, column].LetSquareGo();
+                    }
+                }
+                foreach (int row in squaresToPull)
+                {
+                    for (int column = 0; column < 10; ++column)
+                    {
+                        tiles[row, column].MakeSquareFall();
                     }
                 }
             }
