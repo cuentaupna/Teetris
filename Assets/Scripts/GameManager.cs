@@ -4,100 +4,174 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject tile;
-    public GameObject[,] tilesGameObj = new GameObject[16,10];
-    public GameObject Tetri;
-    private Tetromino TS;
-    private Tile[,] tiles = new Tile[16,10];
-    // Start is called before the first frame update
-    void Start()
+    public GameObject sq;
+    int[,] grill = new int[16, 10];
+    List<Tetromino> ListadoDeTetriminosOAlgoAsi = new List<Tetromino>();
+    Tetromino currentTetri;
+    Tetromino nextTetri;
+    public float timeToFall = 60f; //Tiempo en segundos
+    public bool gameOver;
+    public GameObject[,] sprites = new GameObject[16,10];
+    private Coroutine rutina;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="nTetri"></param>
+    /// <returns></returns>
+    public bool MoveTetri(Tetromino nTetri, int[] newPos)
     {
-        Vector2 tilePosition = new Vector2(0, 0);
-        TS = Tetri.GetComponent<Tetromino>();
-        for(int i = 0; i < 16; ++i)
+        bool canMove = CheckCollision(nTetri, newPos);
+        if (canMove)
         {
-           for(int j = 0; j < 10; ++j)
+            nTetri.pos = newPos;
+            //Creamos el Tetrimino
+        }
+        //Si es falso, el juego habrá acabado
+        return canMove;
+    }
+    
+    
+    /// <summary>
+    /// Utilizamos este método para verificar si hay colisiones
+    /// </summary>
+    /// <param name="tetromino"></param>
+    /// <param name="newPos"></param>
+    /// <returns></returns>
+    public bool CheckCollision(Tetromino tetromino, int[] newPos)
+    {
+        if (newPos[0] >= grill.GetLength(0))
+        {
+            return false;
+        }
+        if(newPos[1] < 0 || newPos[1] >= grill.GetLength(1))
+        {
+            return false;
+        }
+        for (int i = 0; i < tetromino.shape.Length; ++i)
+        {
+            for (int j = 0; j < tetromino.shape[i].Length; ++j)
             {
-                tilesGameObj[i, j] = Instantiate(tile, tilePosition, Quaternion.identity);
-                tiles[i, j] = tilesGameObj[i, j].GetComponent<Tile>();
-                ++tilePosition.x;
-                
+                if(tetromino.shape[i][j] != 0)
+                {
+                    if(grill[newPos[0] + i, newPos[1] + j] != 0)
+                    {
+                        return false;
+                    }
+                }
             }
-            tilePosition.x = 0;
-            ++tilePosition.y;
+        }
+        return true;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tetromino"></param>
+    public void Land(Tetromino tetromino)
+    {
+        //Añadimos el Tetromino a la matriz
+        for (int i = 0; i < tetromino.shape.Length; ++i)
+        {
+            for (int j = 0; j < tetromino.shape[i].Length; ++j)
+            {
+                grill[tetromino.pos[0] + i, tetromino.pos[j] + i] += tetromino.shape[i][j];
+            }
+        }
+        //Verificamos si hay alguna línea a limpiar
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public void Start()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            Tetromino xd = new I_Tetra();
+            ListadoDeTetriminosOAlgoAsi.Add(xd);
+        }
+        gameOver = false;
+        Vector2 spritePosition = new Vector2(0, 0);
+        for (int i = 0; i < sprites.GetLength(0); ++i)
+        {
+            for (int j = 0; j < sprites.GetLength(1); ++j)
+            {
+                sprites[i, j] = Instantiate(sq, spritePosition, Quaternion.identity);
+                ++spritePosition.x;
+                sprites[i, j].SetActive(false);
+            }
+            spritePosition.x = 0;
+            ++spritePosition.y;
+        }
+        currentTetri = new O_Tetra();
+        if (currentTetri == null)
+        {
+            Debug.Log("FUCK YOU");
+            //currentTetri = ListadoDeTetriminosOAlgoAsi[0];
+            //currentTetri = new O_Tetra();
+            ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
+            nextTetri = ListadoDeTetriminosOAlgoAsi[0];
+            ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
+        }
+        MoveTetri(currentTetri, new int[] { 0, 4 });
+        rutina = StartCoroutine(RutinaPrincipal());
+        
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator RutinaPrincipal()
+    {
+        
+        for(; ; )
+        {
+            
+            int[] newPos = currentTetri.pos;
+            Debug.Log(newPos);
+            ++newPos[0];
+            if(!MoveTetri(currentTetri, newPos))
+            {
+                Land(currentTetri);
+                currentTetri = nextTetri;
+                nextTetri = ListadoDeTetriminosOAlgoAsi[0];
+                ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
+                if(!MoveTetri(currentTetri, new int[] { 0, 4 }))
+                {
+                    //GAME OVER
+                    gameOver = true;
+                }
+            }
+            yield return new WaitForSeconds(timeToFall);
         }
     }
+    public void DrawGame()
+    {
+        for (int i = 0; i < grill.GetLength(0); ++i)
+        {
+            for (int j = 0; j < grill.GetLength(1); ++j)
+            {
+                if(grill[i,j] != 0)
+                {
+                    sprites[i, j].SetActive(true);
+                }
+            }
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void MoveTetri(int x, int y)
-    {
-        TS.MoveParent(x, y);
-    }
-    public void RotateTetri(int p)
-    {
-        TS.Rotate(p);
-    }
-    public bool CheckTile(int x, int y)
-    {
-        //Check this again
-        //Debug.Log(y+" "+x);
-        if (x < 0 || x > 9 || y > 15 || y < 0)
-            return true;
-        return tiles[y, x].IsTheTileEmpty();
-    }
-    public void ChangeStateOfTiles(int x, int y, Tile.TileStateEnum newState, Square newSquare)
-    {
-        
-        tiles[y, x].ChangeState(newState, newSquare);
-        if(newState == Tile.TileStateEnum.full)
+        for (int i = currentTetri.pos[0]; i < currentTetri.shape.Length; ++i)
         {
-            int counter = 0;
-            List<int> squaresToPull = new List<int>();
-            List<int> squaresToDelete = new List<int>();
-            for (int i = 0; i < 16; ++i)
+            for (int j = currentTetri.pos[1]; j < currentTetri.shape[i].Length; ++j)
             {
-                counter = 0;
-                for (int j = 0; j < 10; ++j)
+                if (currentTetri.shape[i][j] != 0)
                 {
-                    if (!tiles[i, j].IsTheTileEmpty())
-                    {
-                        ++counter;
-                    }
-                    else
-                    {
-                        if (i != 0)
-                            squaresToPull.Add(i);
-                        break;
-                    }
-                }
-                if(counter == 10)
-                {
-                    squaresToDelete.Add(i);
-                }
-            }
-            if(squaresToDelete.Count != 0)
-            {
-                //TODO
-                //Contar cuantas líneas consecutivas hay.
-                foreach (int row in squaresToDelete)
-                {
-                    for (int column = 0; column < 10; ++column)
-                    {
-                        tiles[row, column].LetSquareGo();
-                    }
-                }
-                foreach (int row in squaresToPull)
-                {
-                    for (int column = 0; column < 10; ++column)
-                    {
-                        tiles[row, column].MakeSquareFall();
-                    }
+                    sprites[i, j].SetActive(true);
                 }
             }
         }
+    }
+    public void Update()
+    {
+        if(currentTetri != null)
+            DrawGame();
+        if (gameOver)
+            StopCoroutine(rutina);
     }
 }

@@ -73,7 +73,6 @@
     <Compile Include="Assets\Scripts\Tetras\T_Tetra.cs" />
     <Compile Include="Assets\Scripts\Tetras\Z_Tetra.cs" />
     <Compile Include="Assets\Scripts\Tetromino.cs" />
-    <Compile Include="Assets\Scripts\Tile.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Usuario/Documents/Tetris/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

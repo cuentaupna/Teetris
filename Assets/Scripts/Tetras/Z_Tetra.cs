@@ -4,101 +4,31 @@ using UnityEngine;
 
 public class Z_Tetra : Tetromino
 {
-    protected override void RotateToDirection(TetraFace newFace)
+    readonly int[][] arriba = new int[][] { new int[] { 7, 7, 0}, new int[] { 0, 7, 7}};
+    readonly int[][] derecha = new int[][] { new int[] { 0, 0, 7}, new int[] { 0, 7, 7}, new int[] { 0, 7, 0}};
+    readonly int[][] abajo = new int[][] { new int[] { 7, 7, 0}, new int[] { 0, 7, 7 }};
+    readonly int[][] izquierda = new int[][] { new int[] { 0, 7}, new int[] { 7, 7}, new int[] { 7, 0}};
+    protected override void DoTheWork()
     {
-        switch (newFace)
-        {
-            case TetraFace.Up:
-                if (MakeItVertical())
-                    face = TetraFace.Up;
-                break;
-            case TetraFace.Left:
-                if (MakeItHorizontal())
-                    face = TetraFace.Left;
-                break;
-            case TetraFace.Down:
-                if (MakeItVertical())
-                    face = TetraFace.Down;
-                break;
-            case TetraFace.Right:
-                if (MakeItHorizontal())
-                    face = TetraFace.Right;
-                break;
-        }
+        shape = arriba;
+        TetrID = 7;
     }
-    private bool MakeItHorizontal()
+    protected override void RotateToDirection(TetriFace nTetriFace)
     {
-        bool canRotate = false;
-        for (int i = 0; i < 2; ++i)
+        switch (nTetriFace)
         {
-            canRotate = gameManager.CheckTile((int)transform.position.x + i,
-                (int)transform.position.y);
-            if (!canRotate)
-            {
+            case TetriFace.Up:
+                shape = arriba;
                 break;
-            }
-        }
-        if (canRotate)
-        {
-            for (int i = 0; i < 2; ++i)
-            {
-                canRotate = gameManager.CheckTile((int)transform.position.x - 1 + i,
-                    (int)transform.position.y + 1);
-                if (!canRotate)
-                {
-                    break;
-                }
-            }
-            if (canRotate)
-            {
-                for (int i = 0; i < 2; ++i)
-                {
-                    squareScript[i].MoveSquare(1.5f + i, 0.5f);
-                }
-                for (int i = 2; i < 4; ++i)
-                {
-                    squareScript[i].MoveSquare(-1.5f + i, 1.5f);
-                }
-            }
-        }
-        return canRotate;
-    }
-    private bool MakeItVertical()
-    {
-        bool canRotate = false;
-        for (int i = 0; i < 2; ++i)
-        {
-            canRotate = gameManager.CheckTile((int)transform.position.x,
-                (int)transform.position.y + i);
-            if (!canRotate)
-            {
+            case TetriFace.Right:
+                shape = derecha;
                 break;
-            }
+            case TetriFace.Down:
+                shape = abajo;
+                break;
+            case TetriFace.Left:
+                shape = izquierda;
+                break;
         }
-        if (canRotate)
-        {
-            for (int i = 0; i < 2; ++i)
-            {
-                canRotate = gameManager.CheckTile((int)transform.position.x + 1,
-                    (int)transform.position.y + i + 1);
-                if (!canRotate)
-                {
-                    break;
-                }
-            }
-            if (canRotate)
-            {
-
-                for (int i = 0; i < 2; ++i)
-                {
-                    squareScript[i].MoveSquare(0.5f, 0.5f + i);
-                }
-                for (int i = 2; i < 4; ++i)
-                {
-                    squareScript[i].MoveSquare(1.5f, -0.5f + i);
-                }
-            }
-        }
-        return canRotate;
     }
 }

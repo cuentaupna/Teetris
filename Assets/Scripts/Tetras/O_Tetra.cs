@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class O_Tetra : Tetromino
 {
-    protected override void RotateToDirection(TetraFace newFace)
+    readonly int[][] arriba = new int[][] { new int[] { 5, 5}, new int[] { 5, 5}};
+    protected override void DoTheWork()
     {
-        squareScript[0].MoveSquare(0.5f, 0.5f);
-        squareScript[1].MoveSquare(1.5f, 0.5f);
-        squareScript[2].MoveSquare(0.5f, 1.5f);
-        squareScript[3].MoveSquare(1.5f, 1.5f);
+        shape = arriba;
+        TetrID = 5;
+    }
+    protected override void RotateToDirection(TetriFace nTetriFace)
+    {
+
     }
 }
