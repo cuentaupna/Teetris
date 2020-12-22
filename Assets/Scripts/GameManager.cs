@@ -5,11 +5,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject sq;
-    int[,] grill = new int[16, 10];
+    public int[,] grill = new int[16, 10];
     List<Tetromino> ListadoDeTetriminosOAlgoAsi = new List<Tetromino>();
     Tetromino currentTetri;
     Tetromino nextTetri;
-    public float timeToFall = 60f; //Tiempo en segundos
+    public float timeToFall = 10f; //Tiempo en segundos
     public bool gameOver;
     public GameObject[,] sprites = new GameObject[16,10];
     private Coroutine rutina;
@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public bool CheckCollision(Tetromino tetromino, int[] newPos)
     {
-        if (newPos[0] >= grill.GetLength(0))
+        //Debug.Log("             newPos " + newPos[0] + "    " + newPos[1]);
+        if (newPos[0] >= (grill.GetLength(0) - tetromino.shape.Length))
         {
             return false;
         }
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < tetromino.shape[i].Length; ++j)
             {
-                if(tetromino.shape[i][j] != 0)
+                if (tetromino.shape[i][j] != 0)
                 {
                     if(grill[newPos[0] + i, newPos[1] + j] != 0)
                     {
@@ -73,7 +74,9 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < tetromino.shape[i].Length; ++j)
             {
-                grill[tetromino.pos[0] + i, tetromino.pos[j] + i] += tetromino.shape[i][j];
+                Debug.Log(tetromino.pos[0] + i);
+                Debug.Log(tetromino.pos[1] + j);
+                grill[tetromino.pos[0] + i, tetromino.pos[1] + j] += tetromino.shape[i][j];
             }
         }
         //Verificamos si hay alguna línea a limpiar
@@ -101,7 +104,7 @@ public class GameManager : MonoBehaviour
             spritePosition.x = 0;
             ++spritePosition.y;
         }
-        currentTetri = new O_Tetra();
+        currentTetri = new J_Tetra();
         if (currentTetri == null)
         {
             Debug.Log("FUCK YOU");
@@ -124,13 +127,19 @@ public class GameManager : MonoBehaviour
         
         for(; ; )
         {
-            
+            if (currentTetri != null)
+            {
+                DrawGame(false);
+                DrawGame(true);
+            }
             int[] newPos = currentTetri.pos;
-            Debug.Log(newPos);
             ++newPos[0];
             if(!MoveTetri(currentTetri, newPos))
             {
                 Land(currentTetri);
+                Debug.Log("Game Over");
+                gameOver = true;
+                /*
                 currentTetri = nextTetri;
                 nextTetri = ListadoDeTetriminosOAlgoAsi[0];
                 ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
@@ -138,40 +147,61 @@ public class GameManager : MonoBehaviour
                 {
                     //GAME OVER
                     gameOver = true;
+                    Debug.Log("Game OVer");
                 }
+                */
             }
+            //Debug.Log("Next Iter");
+            //DrawGame(false);
             yield return new WaitForSeconds(timeToFall);
         }
     }
-    public void DrawGame()
+    public void DrawGame(bool drawTetri)
     {
-        for (int i = 0; i < grill.GetLength(0); ++i)
+        if (drawTetri)
         {
-            for (int j = 0; j < grill.GetLength(1); ++j)
+            for (int i = 0; i < grill.GetLength(0); ++i)
             {
-                if(grill[i,j] != 0)
+                for (int j = 0; j < grill.GetLength(1); ++j)
                 {
-                    sprites[i, j].SetActive(true);
+                    if (grill[i, j] != 0)
+                    {
+                        sprites[i, j].SetActive(true);
+                    }
+                }
+            }
+            for (int i = 0; i < currentTetri.shape.Length; ++i)
+            {
+                for (int j = 0; j < currentTetri.shape[i].Length; ++j)
+                {
+                    //Debug.Log(tetromino.pos[0] + i);
+                    //Debug.Log(tetromino.pos[1] + j);
+                    if(currentTetri.shape[i][j] != 0)
+                        sprites[currentTetri.pos[0] + i, currentTetri.pos[1] + j].SetActive(true);
                 }
             }
         }
-
-        for (int i = currentTetri.pos[0]; i < currentTetri.shape.Length; ++i)
+        else
         {
-            for (int j = currentTetri.pos[1]; j < currentTetri.shape[i].Length; ++j)
+            for (int i = 0; i < grill.GetLength(0); ++i)
             {
-                if (currentTetri.shape[i][j] != 0)
+                for (int j = 0; j < grill.GetLength(1); ++j)
                 {
-                    sprites[i, j].SetActive(true);
+                    sprites[i, j].SetActive(false);
                 }
             }
         }
     }
+
     public void Update()
     {
-        if(currentTetri != null)
-            DrawGame();
         if (gameOver)
             StopCoroutine(rutina);
+        
+    }
+
+    public void RotateTetri(bool pDirection)
+    {
+        currentTetri.Rotate(pDirection);
     }
 }

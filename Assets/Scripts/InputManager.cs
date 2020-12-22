@@ -53,12 +53,12 @@ public class InputManager : MonoBehaviour
         {
             //gameManager.MoveTetri(-1, 0);
         }
-        if (RotateRight)
+        if (RotateLeft)
         {
-            //gameManager.RotateTetri(1);
-        }else if (RotateLeft)
+            gameManager.RotateTetri(true);
+        }else if (RotateRight)
         {
-            //gameManager.RotateTetri(0);
+            gameManager.RotateTetri(false);
         }
         if (Drop)
         {

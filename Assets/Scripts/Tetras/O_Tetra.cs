@@ -14,4 +14,9 @@ public class O_Tetra : Tetromino
     {
 
     }
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public O_Tetra() : base()
+    {}
 }

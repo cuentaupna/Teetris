@@ -15,6 +15,7 @@ public class J_Tetra : Tetromino
     }
     protected override void RotateToDirection(TetriFace nTetriFace)
     {
+        facingDirection = nTetriFace;
         switch (nTetriFace)
         {
             case TetriFace.Up:
@@ -31,4 +32,6 @@ public class J_Tetra : Tetromino
                 break;
         }
     }
+    public J_Tetra() : base()
+    { }
 }

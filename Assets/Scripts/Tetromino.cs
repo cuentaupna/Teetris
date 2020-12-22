@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tetromino : MonoBehaviour
+public abstract class Tetromino
 {
     public int TetrID;
     public int[][] shape;
@@ -50,7 +50,7 @@ public class Tetromino : MonoBehaviour
             }
         }
     }
-
+    
     protected virtual void RotateToDirection(TetriFace nTetriFace)
     {
 
@@ -59,7 +59,11 @@ public class Tetromino : MonoBehaviour
     {
 
     }
-    public void Start()
+ 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public Tetromino()
     {
         DoTheWork();
     }
