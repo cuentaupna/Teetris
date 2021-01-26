@@ -4,31 +4,17 @@ using UnityEngine;
 
 public class L_Tetra : Tetromino
 {
-    readonly int[][] arriba = new int[][] { new int[] { 0, 0, 3}, new int[] { 3, 3, 3}};
-    readonly int[][] derecha = new int[][] { new int[] { 3, 0}, new int[] { 3, 0}, new int[] { 3, 3}};
-    readonly int[][] abajo = new int[][] { new int[] { 3, 3, 3}, new int[] { 3, 0, 0},};
-    readonly int[][] izquierda = new int[][] { new int[] { 3, 3}, new int[] { 0, 3}, new int[] { 0, 3}};
-    protected override void DoTheWork()
+    /// <summary>
+    /// Constructor L
+    /// </summary>
+    /// <param name="pGameManager"></param>
+    public L_Tetra(GameManager pGameManager) : base(pGameManager)
     {
-        shape = arriba;
         TetrID = 3;
-    }
-    protected override void RotateToDirection(TetriFace nTetriFace)
-    {
-        switch (nTetriFace)
-        {
-            case TetriFace.Up:
-                shape = arriba;
-                break;
-            case TetriFace.Right:
-                shape = derecha;
-                break;
-            case TetriFace.Down:
-                shape = abajo;
-                break;
-            case TetriFace.Left:
-                shape = izquierda;
-                break;
-        }
+        arriba = new int[][] { new int[] { 0, 0, TetrID }, new int[] { TetrID, TetrID, TetrID } };
+        derecha = new int[][] { new int[] { TetrID, 0 }, new int[] { TetrID, 0 }, new int[] { TetrID, TetrID } };
+        abajo = new int[][] { new int[] { TetrID, TetrID, TetrID }, new int[] { TetrID, 0, 0 }, };
+        izquierda = new int[][] { new int[] { TetrID, TetrID }, new int[] { 0, TetrID }, new int[] { 0, TetrID } };
+        shape = arriba;
     }
 }

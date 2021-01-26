@@ -4,19 +4,16 @@ using UnityEngine;
 
 public class O_Tetra : Tetromino
 {
-    readonly int[][] arriba = new int[][] { new int[] { 5, 5}, new int[] { 5, 5}};
-    protected override void DoTheWork()
-    {
-        shape = arriba;
-        TetrID = 5;
-    }
-    protected override void RotateToDirection(TetriFace nTetriFace)
-    {
-
-    }
     /// <summary>
-    /// Constructor
+    /// Constructor O
     /// </summary>
-    public O_Tetra() : base()
-    {}
+    public O_Tetra(GameManager pGameManager) : base(pGameManager)
+    {
+        TetrID = 4;
+        arriba = new int[][] { new int[] { TetrID, TetrID }, new int[] { TetrID, TetrID } };
+        abajo = arriba;
+        izquierda = arriba;
+        derecha = arriba;
+        shape = arriba;
+    }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// Variables ////////////////////////////////////////////////
+    /// </summary>
     public GameObject sq;
     public int[,] grill = new int[16, 10];
     List<Tetromino> ListadoDeTetriminosOAlgoAsi = new List<Tetromino>();
@@ -13,8 +16,13 @@ public class GameManager : MonoBehaviour
     public bool gameOver;
     public GameObject[,] sprites = new GameObject[16,10];
     private Coroutine rutina;
+
+    /**
+     * Metodos
+    */
+
     /// <summary>
-    /// 
+    /// Movemos currentTetri a la posicion newPos
     /// </summary>
     /// <param name="nTetri"></param>
     /// <returns></returns>
@@ -29,30 +37,52 @@ public class GameManager : MonoBehaviour
         //Si es falso, el juego habrá acabado
         return canMove;
     }
-    
-    
+    /// <summary>
+    /// Movemos el Tetromino: -1 a la izquierda, 1 a la derecha
+    /// </summary>
+    /// <param name="pDirection"></param>
+    public void MoveInHorizonalAxis(int pDirection)
+    {
+        int[] newPos = currentTetri.pos;
+        newPos[1] -= pDirection ;
+        MoveTetri(currentTetri, newPos);
+    }
     /// <summary>
     /// Utilizamos este método para verificar si hay colisiones
     /// </summary>
     /// <param name="tetromino"></param>
     /// <param name="newPos"></param>
     /// <returns></returns>
-    public bool CheckCollision(Tetromino tetromino, int[] newPos)
+    public bool CheckCollision(Tetromino tetromino, int[] newPos, int[][] shape = null)
     {
         //Debug.Log("             newPos " + newPos[0] + "    " + newPos[1]);
-        if (newPos[0] >= (grill.GetLength(0) - tetromino.shape.Length))
+        if(shape == null)
+        {
+            shape = tetromino.shape;
+        }
+        if (newPos[0] >= (grill.GetLength(0) - shape.Length))
         {
             return false;
         }
-        if(newPos[1] < 0 || newPos[1] >= grill.GetLength(1))
+
+        int max = 0;
+        for (int i = 0; i < shape.Length; ++i)
+        {
+            if (max < shape[i].Length)
+                max = shape[i].Length;
+        }
+        Debug.Log("MAX:" + max);
+        Debug.Log("             NewPos: " + newPos[1]);
+        Debug.Log("OP:" + (grill.GetLength(1) - max));
+        if((newPos[1] < 0) || (newPos[1] >= (grill.GetLength(1) - max)))
         {
             return false;
         }
-        for (int i = 0; i < tetromino.shape.Length; ++i)
+        for (int i = 0; i < shape.Length; ++i)
         {
-            for (int j = 0; j < tetromino.shape[i].Length; ++j)
+            for (int j = 0; j < shape[i].Length; ++j)
             {
-                if (tetromino.shape[i][j] != 0)
+                if (shape[i][j] != 0)
                 {
                     if(grill[newPos[0] + i, newPos[1] + j] != 0)
                     {
@@ -88,7 +118,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 10; i++)
         {
-            Tetromino xd = new I_Tetra();
+            Tetromino xd = new L_Tetra(this);
             ListadoDeTetriminosOAlgoAsi.Add(xd);
         }
         gameOver = false;
@@ -104,7 +134,10 @@ public class GameManager : MonoBehaviour
             spritePosition.x = 0;
             ++spritePosition.y;
         }
-        currentTetri = new J_Tetra();
+        currentTetri = new O_Tetra(this);
+        //REMOVE
+        nextTetri = ListadoDeTetriminosOAlgoAsi[0];
+        ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
         if (currentTetri == null)
         {
             Debug.Log("FUCK YOU");
@@ -127,19 +160,15 @@ public class GameManager : MonoBehaviour
         
         for(; ; )
         {
-            if (currentTetri != null)
-            {
-                DrawGame(false);
-                DrawGame(true);
-            }
+            
             int[] newPos = currentTetri.pos;
             ++newPos[0];
             if(!MoveTetri(currentTetri, newPos))
             {
                 Land(currentTetri);
-                Debug.Log("Game Over");
-                gameOver = true;
-                /*
+                //Debug.Log("Game Over");
+                //gameOver = true;
+                
                 currentTetri = nextTetri;
                 nextTetri = ListadoDeTetriminosOAlgoAsi[0];
                 ListadoDeTetriminosOAlgoAsi.RemoveAt(0);
@@ -149,8 +178,9 @@ public class GameManager : MonoBehaviour
                     gameOver = true;
                     Debug.Log("Game OVer");
                 }
-                */
+                
             }
+            CheckLines();
             //Debug.Log("Next Iter");
             //DrawGame(false);
             yield return new WaitForSeconds(timeToFall);
@@ -170,14 +200,18 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            for (int i = 0; i < currentTetri.shape.Length; ++i)
+            if (currentTetri != null)
             {
-                for (int j = 0; j < currentTetri.shape[i].Length; ++j)
+                Debug.Log("Forma" + currentTetri.shape.Length);
+                for (int i = 0; i < currentTetri.shape.Length; ++i)
                 {
-                    //Debug.Log(tetromino.pos[0] + i);
-                    //Debug.Log(tetromino.pos[1] + j);
-                    if(currentTetri.shape[i][j] != 0)
-                        sprites[currentTetri.pos[0] + i, currentTetri.pos[1] + j].SetActive(true);
+                    for (int j = 0; j < currentTetri.shape[i].Length; ++j)
+                    {
+                        //Debug.Log(tetromino.pos[0] + i);
+                        //Debug.Log(tetromino.pos[1] + j);
+                        if (currentTetri.shape[i][j] != 0)
+                            sprites[currentTetri.pos[0] + i, currentTetri.pos[1] + j].SetActive(true);
+                    }
                 }
             }
         }
@@ -197,11 +231,46 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver)
             StopCoroutine(rutina);
-        
+        DrawGame(false);
+        DrawGame(true);
+
     }
 
     public void RotateTetri(bool pDirection)
     {
         currentTetri.Rotate(pDirection);
+    }
+
+    public void CheckLines()
+    {
+        List<int> xd = new List<int>();
+        int contador;
+        for (int i = 0; i < grill.GetLength(0); ++i)
+        {
+            contador = 0;
+            for (int j = 0; j < grill.GetLength(1); ++j)
+            {
+                if (grill[i, j] != 0)
+                    ++contador;
+            }
+            if (contador == grill.GetLength(1))
+                xd.Add(i);
+        }
+
+        foreach (int item in xd)
+        {
+            for (int j = 0; j < grill.GetLength(1); ++j)
+            {
+                grill[item, j] = 0;
+            }
+            //Tenemos que copiar los números de las filas superiores a una inferior
+            for (int i = item + 1; i < grill.GetLength(0); ++i)
+            {
+                for (int j = 0; j < grill.GetLength(1); ++j)
+                {
+                    grill[item - 1, j] = grill[item, j];
+                }
+            }
+        }
     }
 }

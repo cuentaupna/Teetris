@@ -48,10 +48,11 @@ public class InputManager : MonoBehaviour
     {
         if (moveRight)
         {
-            //gameManager.MoveTetri(1, 0);
-        }else if (moveLeft)
+            gameManager.MoveInHorizonalAxis(1);
+        }
+        else if (moveLeft)
         {
-            //gameManager.MoveTetri(-1, 0);
+            gameManager.MoveInHorizonalAxis(-1);
         }
         if (RotateLeft)
         {

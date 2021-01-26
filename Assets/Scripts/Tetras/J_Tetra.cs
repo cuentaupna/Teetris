@@ -4,34 +4,17 @@ using UnityEngine;
 
 public class J_Tetra : Tetromino
 {
-    readonly int[][] arriba = new int[][] { new int[] { 2, 0, 0,}, new int[] { 2, 2, 2}};
-    readonly int[][] derecha = new int[][] { new int[] { 2, 2}, new int[] { 2, 0}, new int[] { 2, 0}};
-    readonly int[][] abajo = new int[][] { new int[] { 2, 2, 2}, new int[] { 0, 0, 2}};
-    readonly int[][] izquierda = new int[][] { new int[] { 0, 2}, new int[] { 0, 2}, new int[] { 2, 2}};
-    protected override void DoTheWork()
+    /// <summary>
+    /// Constructor J
+    /// </summary>
+    /// <param name="pGameManager"></param>
+    public J_Tetra(GameManager pGameManager) : base(pGameManager)
     {
-        shape = arriba;
         TetrID = 2;
+        arriba = new int[][] { new int[] { TetrID, 0, 0, }, new int[] { TetrID, TetrID, TetrID } };
+        derecha = new int[][] { new int[] { TetrID, TetrID }, new int[] { TetrID, 0 }, new int[] { TetrID, 0 } };
+        abajo = new int[][] { new int[] { TetrID, TetrID, TetrID }, new int[] { 0, 0, TetrID } };
+        izquierda = new int[][] { new int[] { 0, TetrID }, new int[] { 0, TetrID }, new int[] { TetrID, TetrID } };
+        shape = arriba;
     }
-    protected override void RotateToDirection(TetriFace nTetriFace)
-    {
-        facingDirection = nTetriFace;
-        switch (nTetriFace)
-        {
-            case TetriFace.Up:
-                shape = arriba;
-                break;
-            case TetriFace.Right:
-                shape = derecha;
-                break;
-            case TetriFace.Down:
-                shape = abajo;
-                break;
-            case TetriFace.Left:
-                shape = izquierda;
-                break;
-        }
-    }
-    public J_Tetra() : base()
-    { }
 }

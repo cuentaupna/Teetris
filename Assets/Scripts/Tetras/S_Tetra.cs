@@ -4,31 +4,18 @@ using UnityEngine;
 
 public class S_Tetra : Tetromino
 {
-    readonly int[][] arriba = new int[][] { new int[] { 0, 4, 4}, new int[] { 4, 4, 0} };
-    readonly int[][] derecha = new int[][] { new int[] { 4, 0}, new int[] { 4, 4}, new int[] { 0, 4} };
-    readonly int[][] abajo = new int[][] { new int[] { 0, 4, 4, 0 }, new int[] { 4, 4, 0, 0 } };
-    readonly int[][] izquierda = new int[][] { new int[] { 4, 0}, new int[] { 4, 4}, new int[] { 4, 0} };
-    protected override void DoTheWork()
+    /// <summary>
+    /// Constructor S
+    /// </summary>
+    /// <param name="pGameManager"></param>
+    public S_Tetra(GameManager pGameManager) : base(pGameManager)
     {
+        
+        TetrID = 5;
+        arriba = new int[][] { new int[] { 0, TetrID, TetrID }, new int[] { TetrID, TetrID, 0 } };
+        derecha = new int[][] { new int[] { TetrID, 0 }, new int[] { TetrID, TetrID }, new int[] { 0, TetrID } };
+        abajo = new int[][] { new int[] { 0, TetrID, TetrID, 0 }, new int[] { TetrID, TetrID, 0, 0 } };
+        izquierda = new int[][] { new int[] { TetrID, 0 }, new int[] { TetrID, TetrID }, new int[] { TetrID, 0 } };
         shape = arriba;
-        TetrID = 4;
-    }
-    protected override void RotateToDirection(TetriFace nTetriFace)
-    {
-        switch (nTetriFace)
-        {
-            case TetriFace.Up:
-                shape = arriba;
-                break;
-            case TetriFace.Right:
-                shape = derecha;
-                break;
-            case TetriFace.Down:
-                shape = abajo;
-                break;
-            case TetriFace.Left:
-                shape = izquierda;
-                break;
-        }
     }
 }
